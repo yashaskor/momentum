@@ -5,6 +5,12 @@ const yourName = document.querySelector('.name');
 const quote = document.querySelector('.quote');
 const author = document.querySelector('.author');
 const quoteBtn = document.querySelector('.change-quote')
+const weatherIcon = document.querySelector('.weather-icon');
+const temperature = document.querySelector('.temperature');
+const weatherDescription = document.querySelector('.weather-description');
+const printCity = document.querySelector('.city');
+const wind = document.querySelector('.wind');
+const humidity = document.querySelector('.humidity');
 
 const quoteList = [
     {
@@ -141,13 +147,22 @@ getTimeOfDay()
 /* Start Local storage */
 function setLocalStorage() {
     localStorage.setItem('name', yourName.value);
+    localStorage.setItem('city', printCity.value);
 }
 window.addEventListener('beforeunload', setLocalStorage);
 
 function getLocalStorage() {
     if(localStorage.getItem('name')) {
-        yourName.value = localStorage.getItem('name');
+      yourName.value = localStorage.getItem('name');
+    }    
+    if(localStorage.getItem('city') == null || localStorage.getItem('city') == '') {            
+      localStorage.setItem('city', `Kyiv`);      
+      getWeather();
+    }  
+    if(localStorage.getItem('city')) {
+      printCity.value = localStorage.getItem('city');
     }
+    getWeather();
 }
 window.addEventListener('load', getLocalStorage)
 /* End Local storage */
@@ -181,4 +196,22 @@ async function getLinkToImage() {
     return data.urls.regular;
    }
    getLinkToImage()
-   
+  
+/*Start weather */
+printCity.addEventListener('change', () => {
+  localStorage.setItem('city', printCity.value);
+  getWeather();
+})
+
+async function getWeather() {  
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${printCity.value}&lang=en&appid=1c08593b81bd72da4d8fdd7849d743a3&units=metric`;
+  const res = await fetch(url);
+  const data = await res.json(); 
+  weatherIcon.className = 'weather-icon owf';
+  weatherIcon.classList.add(`owf-${data.weather[0].id}`);
+  temperature.textContent = `${data.main.temp}°C`;
+  weatherDescription.textContent = data.weather[0].description;
+  wind.textContent = `Wind speed: ${Math.round(data.wind.speed)} km/h`;
+  humidity.textContent = `Humidity: ${data.main.humidity} %`;    
+}
+/*End weather */
