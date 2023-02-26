@@ -12,6 +12,9 @@ const printCity = document.querySelector('.city');
 const wind = document.querySelector('.wind');
 const humidity = document.querySelector('.humidity');
 
+const nextSlide = document.querySelector('.slide-next'); 
+const prevSlide = document.querySelector('.slide-prev');
+
 const quoteList = [
     {
         "text": "Чем умнее человек, тем легче он признает себя дураком.",
@@ -131,11 +134,11 @@ showDate();
 function getTimeOfDay() {
     const date = new Date();
     const hours = date.getHours();
-    if(hours > 5 && hours < 13){
+    if(hours >= 6 && hours < 12){
         timeGreeting.textContent = "Good morning,"
-    } else if (hours > 12 && hours < 18){
+    } else if (hours >= 12 && hours < 18){
         timeGreeting.textContent = "Good afternoon,"
-    } else if (hours > 17 && hours < 24){
+    } else if (hours >= 18 && hours < 24){
         timeGreeting.textContent = "Good evening,"
     } else {
         timeGreeting.textContent = "Good night,"
@@ -209,9 +212,62 @@ async function getWeather() {
   const data = await res.json(); 
   weatherIcon.className = 'weather-icon owf';
   weatherIcon.classList.add(`owf-${data.weather[0].id}`);
-  temperature.textContent = `${data.main.temp}°C`;
+  temperature.textContent = `${Math.round(data.main.temp)}°C`;
   weatherDescription.textContent = data.weather[0].description;
-  wind.textContent = `Wind speed: ${Math.round(data.wind.speed)} km/h`;
+  wind.textContent = `Wind speed: ${Math.round(Math.round(data.wind.speed))} km/h`;
   humidity.textContent = `Humidity: ${data.main.humidity} %`;    
 }
 /*End weather */
+
+/*Start slider */
+const link = 'https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/';
+let randNumber = Math.floor(Math.random() * (20 - 1 + 1)) + 1;
+
+function getDayTime() {
+  const date = new Date();
+  const hours = date.getHours();
+  if(hours >= 6 && hours < 12){
+      return "morning/"
+  } else if(hours >= 12 && hours < 18){
+      return "afternoon/"
+  } else if(hours >= 18 && hours < 24){
+      return "evening/"
+  } else {
+      return "night/"
+  }
+}
+
+function setBg() {  
+  const img = new Image();
+  let dayTime = getDayTime();
+  if(String(randNumber).length < 2) {
+      img.src = `${link}${dayTime}${String(randNumber).padStart(2,"0")}.jpg`
+  } else {
+      img.src = `${link}${dayTime}${randNumber}.jpg`
+  }  
+  img.addEventListener('load', () => {
+    document.body.style.backgroundImage = `url(${img.src})`;
+  })
+}
+setBg()
+
+nextSlide.addEventListener('click', getSlideNext);
+function getSlideNext () {
+  if(randNumber == 20) {
+    randNumber = 1
+  } else {
+    randNumber++;
+  }
+  setBg()
+}
+prevSlide.addEventListener('click', getSlidePrev);
+function getSlidePrev () {
+  if(randNumber == 1) {
+    randNumber = 20;
+  } else {
+    randNumber--;
+  }
+  setBg()
+}
+
+/*End slider */
