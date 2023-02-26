@@ -284,3 +284,15 @@
       padding: 5px;
     }
   }
+  .git__logo {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  .git__logo-link {
+    text-decoration: none;
+    color: #fff;
+  }
+  .rs-link {
+    text-decoration: none;
+    color: #fff;
+  }

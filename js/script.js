@@ -1,3 +1,7 @@
+import playList from './playList.js';
+let arr;
+console.log(playList);
+
 const time = document.querySelector('.time');
 const actualDate = document.querySelector('.date');
 const timeGreeting = document.querySelector('.greeting');
@@ -14,6 +18,12 @@ const humidity = document.querySelector('.humidity');
 
 const nextSlide = document.querySelector('.slide-next'); 
 const prevSlide = document.querySelector('.slide-prev');
+
+const playerStop = document.querySelector('.pause') 
+const playerPlay = document.querySelector('.play') 
+const playerPrev = document.querySelector('.play-prev') 
+const playerNext = document.querySelector('.play-next')
+const playlist = document.querySelector('.play-list')
 
 const quoteList = [
     {
@@ -269,5 +279,96 @@ function getSlidePrev () {
   }
   setBg()
 }
-
 /*End slider */
+
+/*Start audio */
+let isPlay = false;
+let n = 0;
+
+const audio = new Audio();
+audio.src = playList[n].src;
+
+// function playAudio() {
+//   // audio.src = 'https://7oom.ru/audio/naturesounds/07%20Birds%20(7oom.ru).mp3';
+//   audio.currentTime = 0;
+//   // audio.play();
+// }
+
+// playerStop.addEventListener('click', pauseAudio);
+// function pauseAudio() {
+//   audio.pause();
+// }
+
+playerNext.onclick = function(){selecting_track(1)};
+playerPrev.onclick = function(){selecting_track(-1)};
+function selecting_track(direction){
+    n += direction;
+    if(n >= playList.length) n = 0;
+    if(n < 0) n = playList.length - 1;
+    audio.src = playList[n].src;
+    audio.play();    
+}
+
+// playerPrev.addEventListener('click', () => { 
+//       if(n < 0) n = playList.length - 1;
+//         audio.src = playList[n].src;
+//         n--;  
+//         audio.play();
+       
+// })
+
+// playerNext.addEventListener('click', () => {
+//       if(n >= playList.length) n = 0;
+//         audio.src = playList[n].src;
+//         n++; 
+//         audio.play();
+         
+// })
+
+function audioPlayer() {
+  if(isPlay == false) {
+      audio.play();
+      isPlay = true
+  } else {
+      audio.pause()
+      isPlay = false
+  }
+  arr[n].classList.toggle('play-item');  
+}
+
+playerPlay.addEventListener('click', () => {  
+  playerPlay.classList.toggle('pause');  
+  audioPlayer();
+  playAudio();
+})
+
+// audio.onended = function () {
+//       n++;
+//       if(n>=playList.length){n=0};
+//       audio.src=playList[n].src;
+//       audio.play();
+//   }
+  
+
+function createTrackList () {
+  let liArr = [];
+  for(let i = 0; i < playList.length; i++) {
+    const li = document.createElement('li');
+    li.textContent = `${playList[i].title}`;
+    playlist.append(li);
+    li.addEventListener('click', ()=> {      
+         isPlayed = true;
+         audio.src = playList[i].src;
+         controlPlay.classList.toggle('pause');
+         audio.play();
+         li.classList.toggle('play-item');
+         n = i;
+    });
+    liArr.push(li);
+  }
+  return arr = liArr
+}
+window.addEventListener('load', createTrackList)
+
+
+/*End audio */
